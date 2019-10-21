@@ -2,8 +2,45 @@
 
     We will be using the [cookie](https://www.npmjs.com/package/cookie) module to set cookie headers in the response.
 */
+const cookie = require('cookie')
 
 exports.handler = async (event, context) => {
+  const hour = 3600000
+  const twoWeeks = 14 * 24 * hour
+  const myCookie = cookie.serialize('my_cookie', 'lolHi', {
+    secure: true,
+    httpOnly: true,
+    path: '/',
+    maxAge: twoWeeks,
+  })
+  const redirectUrl = 'https://google.com'
+  // Do redirects via html
+  const html = `
+  <html lang="en">
+    <head>
+      <meta charset="utf-8">
+    </head>
+    <body>
+      <noscript>
+        <meta http-equiv="refresh" content="0; url=${redirectUrl}" />
+      </noscript>
+    </body>
+    <script>
+      setTimeout(function() {
+        window.location.href = ${JSON.stringify(redirectUrl)}
+      }, 0)
+    </script>
+  </html>`
+
+  return {
+    'statusCode': 200,
+    'headers': {
+      'Set-Cookie': myCookie,
+      'Cache-Control': 'no-cache',
+      'Content-Type': 'text/html',
+    },
+    'body': html
+  }
   /* Step 5. In this_file, use the cookie module to generate a new cookie string
 
       We will use the `cookie.serialize` method and set the `secure` option to `true`
@@ -16,7 +53,7 @@ exports.handler = async (event, context) => {
       ```
   */
   /* Step 6. In this_file, choose a redirect URL to send visitors to after we set our cookie */
-  const redirectUrl = 'https://google.com'
+  // const redirectUrl = 'https://google.com'
 
   /* Step 7. In this_file, we will be using html meta refresh as our redirect mechanism
 

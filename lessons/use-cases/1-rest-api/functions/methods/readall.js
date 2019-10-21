@@ -7,9 +7,9 @@ const client = new faunadb.Client({
 })
 
 module.exports = async (event, context) => {
-  console.log('Function `read-all` invoked')
+  console.log('Function `readall` invoked')
   return client
-    .query(q.Paginate(q.Match(q.Ref('indexes/all_items'))))
+    .query(q.Paginate(q.Match(q.Ref('indexes/todos'))))
     .then(response => {
       const itemRefs = response.data
       // create new query out of item refs. http://bit.ly/2LG3MLg
